@@ -65,7 +65,7 @@
                 this.$router.push({ path: '/table' });
               }
             });*/
-            this.$http.post("/login",loginParams).then((retsult)=>{
+            this.$http.post("/user/login",loginParams).then((retsult)=>{
                 this.logining = false;
                 //NProgress.done();
                 let { msg,success,data,errorCode } = retsult.data;
