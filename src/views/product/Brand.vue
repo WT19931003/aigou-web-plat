@@ -86,7 +86,30 @@
 					<el-input v-model="addForm.englishName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="品牌类型" prop="productTypeId">
-					<el-input v-model="addForm.productTypeId" auto-complete="off"></el-input>
+					<el-cascader
+							:options="productTypes"
+							v-model="selectedOptions"
+							@change="handleChange">
+					</el-cascader>
+				</el-form-item>
+				<el-form-item label="LOGO">
+					<!--
+                    action 必选参数, 上传的地址
+                    on-remove : 删除的回调
+                    file-list : 上传的文件列表
+                    -->
+					<el-upload
+							class="upload-demo"
+							action="http://localhost:1299/services/common/fastdfs"
+							:on-remove="handleRemoveLogo"
+							:file-list="logoList"
+							:on-success="handleSuccess"
+							:multiple="false"
+							:before-upload="handleBeforeUpload"
+							list-type="picture">
+						<el-button size="small" type="primary">点击上传</el-button>
+						<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+					</el-upload>
 				</el-form-item>
 				<el-form-item label="品牌描述" prop="description">
 					<el-input type="textarea" v-model="addForm.description"></el-input>
@@ -108,6 +131,7 @@
 	export default {
 		data() {
 			return {
+                productTypes:[],
 				filters: {
 					keyword: ''
 				},
@@ -148,11 +172,36 @@
                     englishName: '',
                     productTypeId: '',
                     description: '',
+                    logo: '',
 				}
 
 			}
 		},
 		methods: {
+
+            //上传之前
+            handleBeforeUpload(){
+                console.debug(this.logoList.length)
+                if(this.logoList.length>0){
+                    this.$message({
+                        message: '只能上传一个文件',
+                        type: 'error'
+                    });
+                    return false;
+                }
+            },
+            //logo上传成功的钩子函数
+            handleSuccess(response, file, fileList){
+                this.addForm.logo = response.restObj;
+                this.logoList = fileList;
+            },
+            //删除图片
+            handleRemoveLogo(file, fileList){
+                console.debug("file",file)
+                console.debug("fileList",fileList)
+                this.logoList = fileList;
+            },
+
 			//性别显示转换
 			formatSex: function (row, column) {
 				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';

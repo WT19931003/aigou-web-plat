@@ -27,7 +27,7 @@
 			loadProductType(){
 				this.$http.get("/product/productType/list").then(result=>{
 				    let data = result.data;
-				    this.prodctTypes =data;
+				    this.productTypes =data;
 				});
 			}
 
